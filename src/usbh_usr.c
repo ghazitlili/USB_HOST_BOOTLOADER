@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_usr.h"
 #include "stm32f4xx_it.h"
+#include "flash_conf.h"
 
 /** @addtogroup STM32F4-Discovery_Audio_Player_Recorder
   * @{
@@ -298,35 +299,22 @@ int USBH_USR_MSC_Application(void)
         }
       }
       /* Go to menu */
-      USBH_USR_ApplicationState = USH_USR_AUDIO;
+      USBH_USR_ApplicationState = USH_USR_ERASE_PROGRAM;
       break;
 
-    case USH_USR_AUDIO:
-
-      /* Go to Audio menu */
-     if(FR_OK == f_open(&file,"ghazi.txt",FA_READ|FA_CREATE_ALWAYS | FA_WRITE))
-     {
-
-    	 f_write (&file,"hello world it is me ghazi abbassi",34, (void *)&bytesWritten);
-    	 f_close(&file);
-    	 USBH_USR_ApplicationState = COMPARE;
-
-     }
-     break;
-    case COMPARE:
-    	if(FR_OK == f_open(&file,"ghazi.txt",FA_READ))
+    case USH_USR_ERASE_PROGRAM:
+    	/*Erase then program the flash memory*/
+    	if(!Program_flash())
     	{
-    	  f_read(&file,read_data,34, (void *)&bytesWritten);
-          if(!strcmp(read_data,"hello world it is me ghazi abbassi"))
-          {
-        	  STM_EVAL_LEDOn(LED3);
-          }
-
+    		USBH_USR_ApplicationState = IDLE;
+    		STM_EVAL_LEDOn(LED6);
     	}
-    	f_close(&file);
-    	USBH_USR_ApplicationState = IDLE;
-        break;
+    	else
+    	{
+    		STM_EVAL_LEDOn(LED5);
+    	}
 
+     break;
     case IDLE:
     	 asm("nop");
     	break;

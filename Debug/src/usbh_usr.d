@@ -55,7 +55,8 @@ src/usbh_usr.o: ../src/usbh_usr.c \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Class/MSC/inc/usbh_msc_scsi.h \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Class/MSC/inc/usbh_msc_bot.h \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/stm32f4xx_it.h \
- /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usb_conf.h
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usb_conf.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/flash_conf.h
 
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usbh_usr.h:
 
@@ -170,3 +171,5 @@ src/usbh_usr.o: ../src/usbh_usr.c \
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/stm32f4xx_it.h:
 
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usb_conf.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/flash_conf.h:

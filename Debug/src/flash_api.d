@@ -33,7 +33,18 @@ src/flash_api.o: ../src/flash_api.c \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/stm32f4xx_tim.h \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/stm32f4xx_usart.h \
  /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/stm32f4xx_wwdg.h \
- /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/misc.h
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/misc.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_core.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_hcd.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_regs.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usb_conf.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_core.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_defines.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_def.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_conf.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/ff.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/integer.h \
+ /home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/ffconf.h
 
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/flash_conf.h:
 
@@ -104,3 +115,25 @@ src/flash_api.o: ../src/flash_api.c \
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/stm32f4xx_wwdg.h:
 
 /home/ghazi/Documents/swstm32_workspace/USB_HOST/StdPeriph_Driver/inc/misc.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_core.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_hcd.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_regs.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/inc/usb_conf.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_core.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_OTG_Driver/inc/usb_defines.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_def.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/USB_HOST_Library/Core/inc/usbh_conf.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/ff.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/integer.h:
+
+/home/ghazi/Documents/swstm32_workspace/USB_HOST/fat_fs/inc/ffconf.h:

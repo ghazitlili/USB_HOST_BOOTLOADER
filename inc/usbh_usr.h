@@ -37,8 +37,8 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* State Machine for the USBH_USR_ApplicationState */
-#define USH_USR_FS_INIT    ((uint8_t)0x00)
-#define USH_USR_AUDIO      ((uint8_t)0x01)
+#define USH_USR_FS_INIT            ((uint8_t)0x00)
+#define USH_USR_ERASE_PROGRAM      ((uint8_t)0x01)
 #define IDLE               ((uint8_t)0x02)
 #define COMPARE            ((uint8_t)0x03)
 
