@@ -23,6 +23,7 @@
 #include "usbh_usr.h"
 #include "stm32f4xx_it.h"
 #include "flash_conf.h"
+#include "API_BLD.h"
 
 /** @addtogroup STM32F4-Discovery_Audio_Player_Recorder
   * @{
@@ -33,8 +34,6 @@
 /* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-__IO uint8_t Command_index = 0;
-uint16_t bytesWritten;
 /*  Points to the DEVICE_PROP structure of current device */
 /*  The purpose of this register is to speed up the execution */
 FATFS fatfs;
@@ -42,7 +41,6 @@ FIL file;
 FIL fileR;
 DIR dir;
 FILINFO fno;
-char read_data[34];
 USBH_Usr_cb_TypeDef USR_Callbacks =
 {
   USBH_USR_Init,
@@ -124,19 +122,7 @@ void USBH_USR_DeviceDisconnected (void)
   /* Disable the Timer */
   TIM_ITConfig(TIM4, TIM_IT_CC1 , DISABLE);
 
-  /* If USB key Removed when playing a wave */
-  if((Command_index != 1))
-  {
-    Command_index = 0;
-  } 
-  
-  /* If USB key Removed when recording a wave */
-  if(Command_index == 1)
-  {
-    STM_EVAL_LEDOff(LED3);
-    Command_index = 1;
-    LED_Toggle = 7;
-  }
+
 }
 
 /**
@@ -303,6 +289,7 @@ int USBH_USR_MSC_Application(void)
       break;
 
     case USH_USR_ERASE_PROGRAM:
+    	asm("nop");
     	/*Erase then program the flash memory*/
     	if(!Program_flash())
     	{
@@ -311,11 +298,12 @@ int USBH_USR_MSC_Application(void)
     	}
     	else
     	{
-    		STM_EVAL_LEDOn(LED5);
+    		STM_EVAL_LEDOn(LED3);
     	}
 
      break;
     case IDLE:
+    	 boot_main();
     	 asm("nop");
     	break;
 

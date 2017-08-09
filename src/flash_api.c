@@ -33,7 +33,7 @@
 uint32_t StartSector = 0, EndSector = 0, Address = 0, i = 0 ;
 __IO uint32_t data32 = 0 , MemoryProgramStatus = 0 ;
 extern  USB_OTG_CORE_HANDLE          USB_OTG_Core;
-FIL file;
+FIL file,file0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 uint32_t GetSector(uint32_t Address);
@@ -53,7 +53,7 @@ int Program_flash(void)
      */
 	uint32_t read_data;
 	uint16_t bytesReadWritten;
-	uint32_t End_Address = FLASH_USER_END_ADDR;
+	uint32_t End_Address = FLASH_USER_START_ADDR;
   if(HCD_IsDeviceConnected(&USB_OTG_Core))
   {
 		  /* Unlock the Flash to enable the flash control register access *************/
@@ -68,7 +68,7 @@ int Program_flash(void)
 		  if(FR_OK == f_open(&file,"USB_HOST.bin",FA_READ))
 		   {
 			  End_Address += file.fsize;
-			  EndSector = GetSector(End_Address);
+
 		   }
 		  else
 		  {
@@ -76,9 +76,10 @@ int Program_flash(void)
 		  }
 		  /* Get the number of the start and end sectors */
 		  StartSector = GetSector(FLASH_USER_START_ADDR);
+		  EndSector   = GetSector(End_Address);
 
 
-		  for (i = StartSector; i < EndSector; i += 8)
+		  for (i = StartSector; i <= EndSector; i += 8)
 		  {
 			/* Device voltage range supposed to be [2.7V to 3.6V], the operation will
 			   be done by word */
@@ -86,7 +87,10 @@ int Program_flash(void)
 			{
 			  /* Error occurred while sector erase.
 				 User can add here some code to deal with this error  */
-			  return 2;
+			  while(1)
+			  {
+
+			  }
 			}
 			else {/*Empty else*/}
 		  }
@@ -95,16 +99,14 @@ int Program_flash(void)
 			(area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
 
 		  Address = FLASH_USER_START_ADDR;
-
 		  while (!f_eof(&file))
 		  {
 			if(FR_OK == f_read(&file,&read_data,4,(void *)&bytesReadWritten))
 			{
-                read_data  = (read_data & 0x000000FF << 24) | \
-                		     (read_data & 0x0000FF00 << 8 ) | \
-							 (read_data & 0x00FF0000 >> 8 ) | \
-							 (read_data & 0xFF000000 >> 24);
-
+//                  read_data  = ((read_data & 0x000000FF) << 24) | \
+//                    		   ((read_data & 0x0000FF00) << 8 ) | \
+//							   ((read_data & 0x00FF0000) >> 8 ) | \
+// 							   ((read_data & 0xFF000000) >> 24);
 
 				if (FLASH_ProgramWord(Address,read_data) == FLASH_COMPLETE)
 				{
@@ -125,27 +127,11 @@ int Program_flash(void)
 			}
 		  }
 		  f_close(&file);
+
 		     /* Lock the Flash to disable the flash control register access (recommended
 			 to protect the FLASH memory against possible unwanted operation) *********/
 		  FLASH_Lock();
 
-		  /* Check if the programmed data is OK
-			  MemoryProgramStatus = 0: data programmed correctly
-			  MemoryProgramStatus != 0: number of words not programmed correctly ******/
-		  Address = FLASH_USER_START_ADDR;
-		  MemoryProgramStatus = 0x0;
-
-		  while (Address < End_Address)
-		  {
-			data32 = *(__IO uint32_t*)Address;
-
-			if (data32 != DATA_32)
-			{
-			  MemoryProgramStatus++;
-			}
-
-			Address = Address + 4;
-		  }
   }
   return 0;
 }

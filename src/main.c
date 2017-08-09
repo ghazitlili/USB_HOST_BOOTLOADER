@@ -56,7 +56,7 @@ int main(void)
   STM_EVAL_LEDInit(LED6);
 
   /* Green Led On: start of application */
-  STM_EVAL_LEDOn(LED4);
+
 
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);

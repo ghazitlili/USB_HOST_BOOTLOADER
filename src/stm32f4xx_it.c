@@ -244,24 +244,7 @@ void EXTI0_IRQHandler(void)
   /* Checks whether the User Button EXTI line is asserted*/
   if (EXTI_GetITStatus(EXTI_Line0) != RESET) 
   { 
-    if (Command_index == 1)
-    {
-    	STM_EVAL_LEDOn(LED4);
-      /* Switch to play command */
-      Command_index = 0;
-    }
-    else if (Command_index == 0)
-    {
-      /* Switch to record command */
-      Command_index = 1;
 
-    }
-    else
-    {
-
-      /* Switch to play command */
-      Command_index = 0; 
-    }
   } 
   /* Clears the EXTI's line pending bit.*/ 
   EXTI_ClearITPendingBit(EXTI_Line0);
