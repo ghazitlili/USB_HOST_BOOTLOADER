@@ -28,6 +28,7 @@
 #include "flash_conf.h"
 #include "usbh_core.h"
 #include "ff.h"
+#include "CRC_32.h"
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t StartSector = 0, EndSector = 0, Address = 0, i = 0 ;
@@ -43,6 +44,8 @@ uint32_t GetSector(uint32_t Address);
   * @param  None
   * @retval None
   */
+uint32_t Computed_CRC = 0;
+uint32_t Computed_CRC0 = 0;
 int Program_flash(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured,
@@ -54,6 +57,8 @@ int Program_flash(void)
 	uint32_t read_data;
 	uint16_t bytesReadWritten;
 	uint32_t End_Address = FLASH_USER_START_ADDR;
+//    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
+//    CRC_ResetDR();
   if(HCD_IsDeviceConnected(&USB_OTG_Core))
   {
 		  /* Unlock the Flash to enable the flash control register access *************/
@@ -103,14 +108,16 @@ int Program_flash(void)
 		  {
 			if(FR_OK == f_read(&file,&read_data,4,(void *)&bytesReadWritten))
 			{
-//                  read_data  = ((read_data & 0x000000FF) << 24) | \
-//                    		   ((read_data & 0x0000FF00) << 8 ) | \
-//							   ((read_data & 0x00FF0000) >> 8 ) | \
-// 							   ((read_data & 0xFF000000) >> 24);
 
+//				CRC->DR = (uint32_t)   ((read_data & 0x000000FF) << 24) | \
+//		                     		   ((read_data & 0x0000FF00) << 8 ) | \
+//									   ((read_data & 0x00FF0000) >> 8 ) | \
+//		 							   ((read_data & 0xFF000000) >> 24);
 				if (FLASH_ProgramWord(Address,read_data) == FLASH_COMPLETE)
 				{
+
 				  Address = Address + 4;
+
 				}
 				else
 				{
@@ -126,10 +133,21 @@ int Program_flash(void)
 			    return 3 ;
 			}
 		  }
-		  f_close(&file);
 
+		  //Computed_CRC=calcCrc32((uint32_t*)FLASH_USER_START_ADDR,file.fsize/4);
+//		  Computed_CRC  = CRC->DR;
+		  Computed_CRC0 = calcCrc32((uint32_t*)FLASH_USER_START_ADDR,file.fsize-4);
+		  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, DISABLE);
+		  if(Compare_CRC(&Computed_CRC0,&read_data))
+		  {
+
+		  }else
+		  {
+            while(1);
+		  }
 		     /* Lock the Flash to disable the flash control register access (recommended
 			 to protect the FLASH memory against possible unwanted operation) *********/
+		  f_close(&file);
 		  FLASH_Lock();
 
   }
@@ -196,6 +214,21 @@ uint32_t GetSector(uint32_t Address)
 
   return sector;
 }
+/**
+  * @brief  Computes the CRC
+  * @param  None
+  */
+uint32_t CRC_CalcBlockCRC(uint32_t pBuffer[], uint32_t BufferLength)
+{
+ uint32_t index = 0;
+
+ for(index = 0; index < (BufferLength % 4 ) ? BufferLength/4+1 : BufferLength/4; index++)
+ {
+   CRC->DR = pBuffer[index];
+ }
+ return (CRC->DR);
+}
+
 
 #ifdef  USE_FULL_ASSERT
 

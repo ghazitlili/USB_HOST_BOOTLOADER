@@ -61,7 +61,8 @@ int main(void)
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
-
+  /* Enable CRC clock */
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
   /* Configure TIM4 Peripheral to manage LEDs lighting */
   TIM_LED_Config();
 
