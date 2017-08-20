@@ -64,8 +64,6 @@ USBH_Usr_cb_TypeDef USR_Callbacks =
 };
 
 
-extern __IO uint8_t RepeatState ;
-extern __IO uint8_t LED_Toggle;
 static uint8_t USBH_USR_ApplicationState = USH_USR_FS_INIT;
 
 
@@ -89,9 +87,6 @@ void USBH_USR_Init(void)
   */
 void USBH_USR_DeviceAttached(void)
 {
-  RepeatState = 0;
-  
-  LED_Toggle = 7;
   /* Red LED off when device attached */
   STM_EVAL_LEDOff(LED5);
   /* Green LED on */

@@ -34,14 +34,10 @@
 #endif
 
 RCC_ClocksTypeDef RCC_Clocks;
-__IO uint8_t RepeatState = 0;
-__IO uint16_t CCR_Val = 16826;
-extern __IO uint8_t LED_Toggle;
 
-/* Private function prototypes -----------------------------------------------*/
-static void TIM_LED_Config(void);
 /* Private functions ---------------------------------------------------------*/
-
+static void Start_Application(void);
+static void Start_Bootloader(void);
 /**
   * @brief  Main program.
   * @param  None
@@ -49,99 +45,54 @@ static void TIM_LED_Config(void);
 */
 int main(void)
 {
+   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+
+   GPIO_InitTypeDef Struct_Init;
+   Struct_Init.GPIO_Pin  = GPIO_Pin_1;
+   Struct_Init.GPIO_Mode = GPIO_Mode_IN;
+   Struct_Init.GPIO_Speed = GPIO_Speed_100MHz;
+   Struct_Init.GPIO_OType = GPIO_OType_PP;
+   Struct_Init.GPIO_PuPd = GPIO_PuPd_DOWN;
+   GPIO_Init(GPIOB,&Struct_Init);
   /* Initialize LEDS */
   STM_EVAL_LEDInit(LED3);
   STM_EVAL_LEDInit(LED4);
   STM_EVAL_LEDInit(LED5);
   STM_EVAL_LEDInit(LED6);
-
-  /* Green Led On: start of application */
-
-
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
-  /* Enable CRC clock */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
-  /* Configure TIM4 Peripheral to manage LEDs lighting */
-  TIM_LED_Config();
-
-  /* Initialize the repeat status */
-  RepeatState = 0;
-  LED_Toggle = 7;
-
-  /* Initialize User Button */
-
-  /* Init Host Library */
-  USBH_Init(&USB_OTG_Core, USB_OTG_FS_CORE_ID, &USB_Host, &USBH_MSC_cb, &USR_Callbacks);
-  //Program_flash();
-  while (1)
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+  uint8_t test = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
+  if(1 == test)
   {
-    /* Host Task handler */
-    USBH_Process(&USB_OTG_Core, &USB_Host);
+	  Start_Bootloader();
   }
-
+  else
+  {
+	  Start_Application();
+  }
+  while(1);
 
 }
-
-/**
-  * @brief  Configures the TIM Peripheral for Led toggling.
-  * @param  None
-  * @retval None
-  */
-static void TIM_LED_Config(void)
+static void Start_Application(void)
 {
-  TIM_OCInitTypeDef  TIM_OCInitStructure;
-  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
-  uint16_t prescalervalue = 0;
-
-  /* TIM4 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-
-  /* Enable the TIM3 gloabal Interrupt */
-  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-  /* Initialize Leds mounted on STM324F4-EVAL board */
-  STM_EVAL_LEDInit(LED3);
-  STM_EVAL_LEDInit(LED4);
-  STM_EVAL_LEDInit(LED6);
-
-  /* Compute the prescaler value */
-  prescalervalue = (uint16_t) ((SystemCoreClock ) / 550000) - 1;
-
-  /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 65535;
-  TIM_TimeBaseStructure.TIM_Prescaler = prescalervalue;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
-
-  /* Enable TIM4 Preload register on ARR */
-  TIM_ARRPreloadConfig(TIM4, ENABLE);
-
-  /* TIM PWM1 Mode configuration: Channel */
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = CCR_Val;
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-
-  /* Output Compare PWM1 Mode configuration: Channel2 */
-  TIM_OC1Init(TIM4, &TIM_OCInitStructure);
-  TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Disable);
-
-  /* TIM Interrupts enable */
-  TIM_ITConfig(TIM4, TIM_IT_CC1 , ENABLE);
-
-  /* TIM4 enable counter */
-  TIM_Cmd(TIM4, ENABLE);
+	boot_main();
 }
+static void Start_Bootloader(void)
+{
+	  /* Init Host Library */
+	  USBH_Init(&USB_OTG_Core, USB_OTG_FS_CORE_ID, &USB_Host, &USBH_MSC_cb, &USR_Callbacks);
+	  //Program_flash();
+	  while (1)
+	  {
+	    /* Host Task handler */
+	    USBH_Process(&USB_OTG_Core, &USB_Host);
+	  }
+
+
+}
+
+
 
 #ifdef  USE_FULL_ASSERT
 

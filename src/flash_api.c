@@ -109,10 +109,6 @@ int Program_flash(void)
 			if(FR_OK == f_read(&file,&read_data,4,(void *)&bytesReadWritten))
 			{
 
-//				CRC->DR = (uint32_t)   ((read_data & 0x000000FF) << 24) | \
-//		                     		   ((read_data & 0x0000FF00) << 8 ) | \
-//									   ((read_data & 0x00FF0000) >> 8 ) | \
-//		 							   ((read_data & 0xFF000000) >> 24);
 				if (FLASH_ProgramWord(Address,read_data) == FLASH_COMPLETE)
 				{
 
@@ -134,8 +130,6 @@ int Program_flash(void)
 			}
 		  }
 
-		  //Computed_CRC=calcCrc32((uint32_t*)FLASH_USER_START_ADDR,file.fsize/4);
-//		  Computed_CRC  = CRC->DR;
 		  Computed_CRC0 = calcCrc32((uint32_t*)FLASH_USER_START_ADDR,file.fsize-4);
 		  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, DISABLE);
 		  if(Compare_CRC(&Computed_CRC0,&read_data))
