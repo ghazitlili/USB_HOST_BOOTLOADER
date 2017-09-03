@@ -28,10 +28,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#if defined MEDIA_USB_KEY
+
  USB_OTG_CORE_HANDLE          USB_OTG_Core;
  USBH_HOST                    USB_Host;
-#endif
+
 
 RCC_ClocksTypeDef RCC_Clocks;
 
@@ -62,8 +62,8 @@ int main(void)
   /* SysTick end of count event each 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
-  uint8_t test = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
-  if(1 == test)
+  uint8_t GPIO_STATE = GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
+  if(1 == GPIO_STATE)
   {
 	  Start_Bootloader();
   }
@@ -74,15 +74,18 @@ int main(void)
   while(1);
 
 }
+
+
 static void Start_Application(void)
 {
 	boot_main();
 }
+
+
 static void Start_Bootloader(void)
 {
 	  /* Init Host Library */
 	  USBH_Init(&USB_OTG_Core, USB_OTG_FS_CORE_ID, &USB_Host, &USBH_MSC_cb, &USR_Callbacks);
-	  //Program_flash();
 	  while (1)
 	  {
 	    /* Host Task handler */

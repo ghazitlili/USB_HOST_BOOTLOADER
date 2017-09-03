@@ -38,9 +38,6 @@
 /*  The purpose of this register is to speed up the execution */
 FATFS fatfs;
 FIL file;
-FIL fileR;
-DIR dir;
-FILINFO fno;
 USBH_Usr_cb_TypeDef USR_Callbacks =
 {
   USBH_USR_Init,
@@ -267,7 +264,11 @@ int USBH_USR_MSC_Application(void)
       if (f_mount( 0, &fatfs ) != FR_OK ) 
       {
         /* efs initialisation fails*/
-        return(-1);
+    	  while(1)
+		  {
+			/* Red LED On */
+			STM_EVAL_LEDOn(LED5);
+		  }
       }
       
       /* Flash Disk is write protected */
@@ -279,12 +280,11 @@ int USBH_USR_MSC_Application(void)
           STM_EVAL_LEDOn(LED5);
         }
       }
-      /* Go to menu */
+      /* Go to ERASE && PROGRAM */
       USBH_USR_ApplicationState = USH_USR_ERASE_PROGRAM;
       break;
 
     case USH_USR_ERASE_PROGRAM:
-    	asm("nop");
     	/*Erase then program the flash memory*/
     	if(!Program_flash())
     	{
@@ -293,17 +293,15 @@ int USBH_USR_MSC_Application(void)
     	}
     	else
     	{
-    		STM_EVAL_LEDOn(LED3);
+    		/* Red LED On */
+    		STM_EVAL_LEDOn(LED5);
     	}
-
      break;
+
     case IDLE:
+    	/* Jump to application */
     	 boot_main();
-    	 asm("nop");
     	break;
-
-      /* Set user initialization flag */
-
 
     default:
       break;

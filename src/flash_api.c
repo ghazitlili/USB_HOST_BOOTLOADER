@@ -32,9 +32,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t StartSector = 0, EndSector = 0, Address = 0, i = 0 ;
-__IO uint32_t data32 = 0 , MemoryProgramStatus = 0 ;
 extern  USB_OTG_CORE_HANDLE          USB_OTG_Core;
-FIL file,file0;
+FIL file;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 uint32_t GetSector(uint32_t Address);
@@ -44,7 +43,6 @@ uint32_t GetSector(uint32_t Address);
   * @param  None
   * @retval None
   */
-uint32_t Computed_CRC = 0;
 uint32_t Computed_CRC0 = 0;
 int Program_flash(void)
 {
@@ -57,8 +55,7 @@ int Program_flash(void)
 	uint32_t read_data;
 	uint16_t bytesReadWritten;
 	uint32_t End_Address = FLASH_USER_START_ADDR;
-//    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
-//    CRC_ResetDR();
+
   if(HCD_IsDeviceConnected(&USB_OTG_Core))
   {
 		  /* Unlock the Flash to enable the flash control register access *************/
@@ -135,7 +132,8 @@ int Program_flash(void)
 		  if(Compare_CRC(&Computed_CRC0,&read_data))
 		  {
 
-		  }else
+		  }
+		  else
 		  {
             while(1);
 		  }
